@@ -9,9 +9,13 @@ const UserSchema = new mongoose.Schema({
   email: {type: String, lowercase: true},
   birthday: {type: String},
   active: {type: Boolean, default: true},
-  CreatedAt: {type: String},
-  UpdatedAt: {type: String},
-  Profile: {type: String},
+  createdAt: {type: String, required: true, default: ""},
+  updatedAt: {type: String},
+  profile: {type: String},
   introduction: {type: String},
   host: {type: Boolean},
-})
+});
+
+module.exports = {
+  UserModel: mongoose.model("user", UserSchema)
+};
