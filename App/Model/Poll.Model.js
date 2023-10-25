@@ -6,7 +6,7 @@ const PollSchema = new mongoose.Schema({
   meta_title: {type: String},
   slug: {type: String},
   summery: {type: [String]},
-  type: {type: String},
+  type: {type: Boolean},
   published: {type: Boolean},
   createdAt: {type: String, required: true, default: ""},
   updatedAt: {type: String},
