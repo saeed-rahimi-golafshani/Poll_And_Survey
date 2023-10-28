@@ -35,9 +35,24 @@ function signRefreshToken(userId){
       resolve(token)
     })
   })
+};
+function verifyRefreshToken(token){
+  return new Promise((resolve, reject) => {
+    jwt.verify(token, REFRESH_TOKEN_SECRETKEY, async (error, payload) => {
+      if(error) reject(createHttpError.Unauthorized("لطفا وارد حساب کاربری خود شوید"));
+      const { mobile } = payload || {};
+      const user = await UserModel.findOne({mobile});
+      if(!user) reject(createHttpError.NotFound("حساب کاربری یافت نشد"));
+      const refreshToken = redisClient.get(user?._id || "key_default");
+      if(!refreshToken) reject(createHttpError.Unauthorized("ورود مجدد به حساب کاربری امکان پذیر نمیباشد، لطفا مجددا تلاش نمایید"));
+      if(token === refreshToken) return resolve(mobile);
+      reject(createHttpError.Unauthorized("ورود مجدد به حساب کاربری امکان پذیر نمیباشد، لطفا مجددا تلاش نمایید"));
+    })
+  })
 }
 
 module.exports = {
   signAccessToken,
-  signRefreshToken
+  signRefreshToken,
+  verifyRefreshToken
 }
