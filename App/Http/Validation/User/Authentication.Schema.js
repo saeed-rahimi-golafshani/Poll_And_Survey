@@ -10,7 +10,12 @@ const registerSchema = joi.object({
   password: joi.string().trim().min(6).max(16).error(createHttpError.BadRequest("ساختار رمز عبور اشتباه است")),
   // repeate_password: joi.string().trim().min(6).max(16).error(createHttpError.BadRequest("ساختار رمز عبور اشتباه است")),
 });
+const loginSchema = joi.object({
+  mobile: joi.string().length(11).pattern(MOBILE_PATTERN).trim().error(createHttpError.BadRequest("ساختار شماره تلفن همراه اشتباه است")),
+  password: joi.string().trim().min(6).max(16).error(createHttpError.BadRequest("ساختار رمز عبور اشتباه است"))
+});
 
 module.exports = {
-  registerSchema
+  registerSchema,
+  loginSchema
 }

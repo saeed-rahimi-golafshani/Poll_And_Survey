@@ -1,10 +1,11 @@
 const createHttpError = require("http-errors");
 const { UserModel } = require("../../../Model/User.Model");
 const Controller = require("../Controller");
-const { registerSchema } = require("../../Validation/User/Authentication.Schema");
+const { registerSchema, loginSchema } = require("../../Validation/User/Authentication.Schema");
 const { hashString, convertGregorianToPersionToday } = require("../../../Utills/Public_Function");
 const { PasswordModel } = require("../../../Model/Password.Model");
 const { StatusCodes: httpStatus } = require("http-status-codes");
+const bcrypt = require("bcrypt");
 
 class AuthenticationController extends Controller{
   async register(req, res, next){
@@ -51,7 +52,20 @@ class AuthenticationController extends Controller{
       next(error)
     }
   };
-  
+  async login(req, res, next){
+    try {
+      const requestBody = await loginSchema.validateAsync(req.body);
+      const { mobile, password } = requestBody;
+      const user = await UserModel.findOne({mobile});
+      if(!user) throw new createHttpError.BadRequest("درخواست نا معتبر، شماره موبایل یا رمز عبور را درست وارد کنید");
+      const getPassword = await PasswordModel.findOne({user_Id: user._id});
+      const confirmPassword = bcrypt.compareSync(password, getPassword.password);
+      if(!confirmPassword) throw new createHttpError.BadRequest("درخواست نا معتبر، شماره موبایل یا رمز عبور را درست وارد کنید");
+      
+    } catch (error) {
+      next(error)
+    }
+  }
   async checkExistUser(mobile){
     const user = await UserModel.findOne({mobile});
     if(user) throw new createHttpError.BadRequest("کاربر با مشخصات زیر از قبل ثبت نام کرده است");
