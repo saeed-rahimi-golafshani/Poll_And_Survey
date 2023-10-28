@@ -15,23 +15,27 @@ module.exports = class Application{
     this.#PORT = PORT;
     this.#DB_URL = DB_URL;
     this.configApplication();
+    this.initConfigRedis();
     this.conectedMongoDb();
     this.createServer();
     this.createRoute();
     this.errorHandler();
-  }
+  };
   configApplication(){
     this.#app.use(express.json());
     this.#app.use(express.urlencoded({extended: true}));
     this.#app.use(express.static(path.join(__dirname, "..", "Public")));
     this.#app.use(cors());
     this.#app.use(morgan("dev"));
-  }
+  };
+  initConfigRedis(){
+    require("./Utills/Init_Redis")
+  };
   createServer(){
     http.createServer(this.#app).listen(this.#PORT, () => {
       console.log("Run >< http://localhost:" + this.#PORT);
     })
-  }
+  };
   conectedMongoDb(){
     mongoose.set('strictQuery', false);
     mongoose.connect(this.#DB_URL, (error) => {
@@ -51,10 +55,10 @@ module.exports = class Application{
         console.log("disconnected...");
         process.exit(0)
     })
-  }
+  };
   createRoute(){
     this.#app.use(AllApiRoutes);
-  }
+  };
   errorHandler(){
     this.#app.use((req, res, next) =>{
         next(createError.NotFound("آدرس صفحه مورد نظر یافت نشد"))
@@ -71,5 +75,5 @@ module.exports = class Application{
             }
         })
     })
-  }
+  };
 }
