@@ -1,7 +1,7 @@
 const { default: mongoose } = require("mongoose");
 
 const UserSchema = new mongoose.Schema({
-  role_Id: {type: mongoose.Types.ObjectId, ref: "role"},
+  // role_Id: {type: mongoose.Types.ObjectId, ref: "role"},
   firstname: {type: String},
   lastname: {type: String},
   username: {type: String},
