@@ -6,6 +6,8 @@ const http = require("http");
 const { default: mongoose } = require("mongoose");
 const createHttpError = require("http-errors");
 const { AllApiRoutes } = require("./Router/Router");
+const swaggerJSDoc = require("swagger-jsdoc");
+const swaggerUI = require("swagger-ui-express");
 
 module.exports = class Application{
   #app = express();
@@ -27,6 +29,36 @@ module.exports = class Application{
     this.#app.use(express.static(path.join(__dirname, "..", "Public")));
     this.#app.use(cors());
     this.#app.use(morgan("dev"));
+
+    this.#app.use("/api-doc", swaggerUI.serve, swaggerUI.setup( 
+      swaggerJSDoc({
+          swaggerDefinition: {
+              openapi: "3.0.0",
+              info : {
+                  title: "Polling Website",
+                  version: "2.0.0",
+                  description: "سایت نظرسنجی"
+              },
+              servers : [{
+                  url : `http://localhost:${this.#PORT}`
+              }],
+              components:{
+                  securitySchemes:{
+                      BearerAuth:{
+                          type: "http",
+                          scheme: "bearer",
+                          bearerFormat: "JWT" 
+                      }
+                  }
+              },
+              security: [{BearerAuth: []}]
+          },
+          apis: ["./App/Routers/**/*.js"]
+      }), 
+      {explorer: true}
+      )
+    )
+
   };
   initConfigRedis(){
     require("./Utills/Init_Redis")
