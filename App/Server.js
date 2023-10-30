@@ -8,6 +8,7 @@ const createHttpError = require("http-errors");
 const { AllApiRoutes } = require("./Router/Router");
 const swaggerJSDoc = require("swagger-jsdoc");
 const swaggerUI = require("swagger-ui-express");
+const UserAgent = require("express-useragent");
 
 module.exports = class Application{
   #app = express();
@@ -29,6 +30,7 @@ module.exports = class Application{
     this.#app.use(express.static(path.join(__dirname, "..", "Public")));
     this.#app.use(cors());
     this.#app.use(morgan("dev"));
+    this.#app.use(UserAgent.express());
 
     this.#app.use("/api-doc", swaggerUI.serve, swaggerUI.setup( 
       swaggerJSDoc({
