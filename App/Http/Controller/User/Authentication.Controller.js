@@ -6,7 +6,7 @@ const { hashString, convertGregorianToPersionToday } = require("../../../Utills/
 const { PasswordModel } = require("../../../Model/Password.Model");
 const { StatusCodes: httpStatus } = require("http-status-codes");
 const bcrypt = require("bcrypt");
-const { signAccessToken, signRefreshToken } = require("../../../Utills/Token");
+const { signAccessToken, signRefreshToken, verifyRefreshToken } = require("../../../Utills/Token");
 const { LoginModel } = require("../../../Model/Login.Model");
 const { BrowserModel } = require("../../../Model/Browser.Model");
 const ip = require("ip");
@@ -113,6 +113,24 @@ class AuthenticationController extends Controller{
     });
         
       } 
+    } catch (error) {
+      next(error)
+    }
+  };
+  async refreshTokenAuth(req, res, next){
+    try {
+      const { refreshToken } = req.body;
+      const mobile = await verifyRefreshToken(refreshToken);
+      const user = await UserModel.findOne({mobile});
+      const accessToken = await signAccessToken(user._id);
+      const newRefreshToken = await signRefreshToken(user._id);
+      return res.status(httpStatus.OK).json({
+        statusCode: httpStatus.OK,
+        data: {
+          accessToken,
+          refreshToken: newRefreshToken
+        }
+      })
     } catch (error) {
       next(error)
     }
