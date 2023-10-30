@@ -3,9 +3,10 @@ const { default: mongoose } = require("mongoose");
 const PollSchema = new mongoose.Schema({
   host_Id: {type: mongoose.Types.ObjectId, ref: "user", required: true},
   title: {type: String, required: true},
+  en_title: {type: String, required: true},
   meta_title: {type: String},
-  slug: {type: String},
-  summery: {type: [String]},
+  slug: {type: String, required: true},
+  summery: {type: String},
   type: {type: Boolean},
   published: {type: Boolean},
   createdAt: {type: String, required: true, default: ""},

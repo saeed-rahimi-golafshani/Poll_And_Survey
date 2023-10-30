@@ -1,4 +1,6 @@
+const { verifyAccessToken } = require("../Http/Middleware/VerifyAccessToken");
 const redisClient = require("../Utills/Init_Redis");
+const { AdminApiRoutes } = require("./Admin/Admin.Routes");
 const { IndexApi } = require("./Api/Home.Routes");
 const { UserApiRoutes } = require("./User/Authentication.Routes");
 const router = require("express").Router();
@@ -10,6 +12,7 @@ const router = require("express").Router();
 
 router.use("/", IndexApi);
 router.use("/user", UserApiRoutes);
+router.use("/admin", verifyAccessToken, AdminApiRoutes);
 
 module.exports = {
   AllApiRoutes: router  
