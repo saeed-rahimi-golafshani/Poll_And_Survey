@@ -24,17 +24,17 @@ function signRefreshToken(userId){
   return new Promise(async(resolve, reject) => {
     const user = await UserModel.findById(userId);
     const payload = {
-      mobile: user.mobile
+        mobile: user.mobile
     };
     const option = {
-      expiresIn: "1y"
+        expiresIn: "1y"
     };
     jwt.sign(payload, REFRESH_TOKEN_SECRETKEY, option, async(error, token) => {
-      if(error) reject(createHttpError.InternalServerError("خطای سروری"));
-      await redisClient.SETEX(userId, (360*24*60*60), token);
-      resolve(token)
+        if(error) reject(createHttpError.InternalServerError("خطای سروری"));
+        await redisClient.SETEX(userId, (360*24*60*60), token);
+        resolve(token)
     })
-  })
+})
 };
 function verifyRefreshToken(token){
   return new Promise((resolve, reject) => {
